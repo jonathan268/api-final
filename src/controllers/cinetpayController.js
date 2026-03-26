@@ -30,8 +30,16 @@ exports.initiateCinetpayPayment = async (req, res) => {
       return res.status(400).json({ error: 'Un paiement existe déjà pour cette commande' });
     }
 
-    // 3. Générer un ID de transaction unique
+// 3. Générer un ID de transaction unique
     const transactionId = `ORDER_${orderId}_${Date.now()}`;
+
+    // Vérifier que l'URL de base est définie
+    if (!process.env.API_URL) {
+      return res.status(500).json({ 
+        error: 'Configuration serveur incomplète', 
+        details: 'API_URL n\'est pas définie dans l\'environnement' 
+      });
+    }
 
     // 4. Préparer les données pour CinetPay [citation:4]
     const paymentData = {
